@@ -9,6 +9,7 @@ import net.momirealms.craftengine.bukkit.util.KeyUtils;
 import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.craftengine.core.util.ReflectionUtils;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.block.data.BlockData;
 
@@ -41,6 +42,8 @@ public class MaterialHelper {
     public static final Class<?> clazz$CraftMagicNumbers = requireNonNull(ReflectionUtils.getClazz(BukkitReflectionUtils.assembleCBClass("util.CraftMagicNumbers")));
     public static final Field field$CraftMagicNumbers$BLOCK_MATERIAL = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "BLOCK_MATERIAL"));
     public static final Field field$CraftMagicNumbers$MATERIAL_BLOCK = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "MATERIAL_BLOCK"));
+    @SuppressWarnings("UnstableApiUsage")
+    public static final Field field$SimpleRegistry$map = requireNonNull(ReflectionUtils.getDeclaredField(Registry.SimpleRegistry.class, "map"));
 
     @SuppressWarnings({"unchecked", "deprecation", "all"})
     public static Material createBlockMaterial(Object block) {
@@ -95,6 +98,9 @@ public class MaterialHelper {
             ((Map<String, Material>) field$Material$BY_NAME.get(null)).put(existingMaterial.name(), existingMaterial);
             ((Map<Object, Material>) field$CraftMagicNumbers$BLOCK_MATERIAL.get(null)).put(block, existingMaterial);
             ((Map<Material, Object>) field$CraftMagicNumbers$MATERIAL_BLOCK.get(null)).put(existingMaterial, block);
+            Map<NamespacedKey, Material> map = new HashMap<>((Map<NamespacedKey, Material>) field$SimpleRegistry$map.get(Registry.MATERIAL));
+            map.put(KeyUtils.toNamespacedKey(blockId), existingMaterial);
+            field$SimpleRegistry$map.set(Registry.MATERIAL, Collections.unmodifiableMap(map));
             return false;
         } catch (Throwable e) {
             CustomMaterial.instance().getLogger().log(Level.WARNING, "Failed to add block to Material", e);
