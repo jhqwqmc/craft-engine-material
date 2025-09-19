@@ -16,7 +16,9 @@ public final class CustomMaterial extends JavaPlugin {
         getLogger().info("The Material enumeration is being dynamically added...");
         try {
             for (Object block : (Iterable<Object>) MBuiltInRegistries.BLOCK) {
-                MaterialHelper.createBlockMaterial(block);
+                if (MaterialHelper.addBlockToMaterial(block)) {
+                    MaterialHelper.createBlockMaterial(block);
+                }
             }
         } catch (Throwable e) {
             getLogger().log(Level.WARNING, """
