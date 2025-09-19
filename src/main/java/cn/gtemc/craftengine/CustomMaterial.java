@@ -1,11 +1,9 @@
 package cn.gtemc.craftengine;
 
 import cn.gtemc.craftengine.util.MaterialHelper;
-import net.kyori.adventure.key.Key;
 import net.momirealms.craftengine.bukkit.plugin.reflection.minecraft.MBuiltInRegistries;
 import net.momirealms.craftengine.core.util.ReflectionUtils;
 import org.bukkit.Material;
-import org.bukkit.Registry;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -39,7 +37,6 @@ public final class CustomMaterial extends JavaPlugin {
                     MaterialHelper.addBlockToMaterial(material);
                 }
             }
-            System.out.println(Registry.MATERIAL.get(Key.key("craftengine:note_block_1")));
         } catch (Throwable e) {
             getLogger().log(Level.WARNING, """
                     Failed to add the Material enumeration dynamically.
