@@ -20,26 +20,27 @@ import java.util.logging.Level;
 import static java.util.Objects.requireNonNull;
 
 public class MaterialHelper {
-    private static final AtomicInteger MATERIAL_LENGTH = new AtomicInteger(Material.values().length);
-    private static final AtomicInteger ID = new AtomicInteger(100000);
-    private static final Field field$Class$enumConstantDirectory = requireNonNull(ReflectionUtils.getDeclaredField(Class.class, "enumConstantDirectory"));
-    private static final Field field$Enum$name = requireNonNull(ReflectionUtils.getDeclaredField(Enum.class, "name"));
-    private static final Field field$Enum$ordinal = requireNonNull(ReflectionUtils.getDeclaredField(Enum.class, "ordinal"));
-    private static final Field field$Material$id = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "id"));
-    private static final Field field$Material$ctor = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "ctor"));
-    private static final Field field$Material$maxStack = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "maxStack"));
-    private static final Field field$Material$durability = ReflectionUtils.getDeclaredField(Material.class, "durability");
-    private static final Field field$Material$data = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "data"));
-    private static final Field field$Material$legacy = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "legacy"));
-    private static final Field field$Material$key = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "key"));
-    private static final Field field$Material$isBlock = ReflectionUtils.getDeclaredField(Material.class, "isBlock");
-    private static final Field field$Material$itemType = ReflectionUtils.getDeclaredField(Material.class, "itemType");
-    private static final Field field$Material$blockType = ReflectionUtils.getDeclaredField(Material.class, "blockType");
-    private static final Field field$Material$BY_NAME = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "BY_NAME"));
-    private static final Field field$Material$VALUES = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "$VALUES"));
-    private static final Class<?> clazz$CraftMagicNumbers = requireNonNull(ReflectionUtils.getClazz(BukkitReflectionUtils.assembleCBClass("util.CraftMagicNumbers")));
-    private static final Field field$CraftMagicNumbers$BLOCK_MATERIAL = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "BLOCK_MATERIAL"));
-    private static final Field field$CraftMagicNumbers$MATERIAL_BLOCK = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "MATERIAL_BLOCK"));
+    public static final AtomicInteger MATERIAL_LENGTH = new AtomicInteger(Material.values().length);
+    public static final AtomicInteger ID = new AtomicInteger(100000);
+    public static final Field field$Class$enumConstantDirectory = requireNonNull(ReflectionUtils.getDeclaredField(Class.class, "enumConstantDirectory"));
+    public static final Field field$Class$enumConstants = requireNonNull(ReflectionUtils.getDeclaredField(Class.class, "enumConstants"));
+    public static final Field field$Enum$name = requireNonNull(ReflectionUtils.getDeclaredField(Enum.class, "name"));
+    public static final Field field$Enum$ordinal = requireNonNull(ReflectionUtils.getDeclaredField(Enum.class, "ordinal"));
+    public static final Field field$Material$id = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "id"));
+    public static final Field field$Material$ctor = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "ctor"));
+    public static final Field field$Material$maxStack = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "maxStack"));
+    public static final Field field$Material$durability = ReflectionUtils.getDeclaredField(Material.class, "durability");
+    public static final Field field$Material$data = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "data"));
+    public static final Field field$Material$legacy = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "legacy"));
+    public static final Field field$Material$key = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "key"));
+    public static final Field field$Material$isBlock = ReflectionUtils.getDeclaredField(Material.class, "isBlock");
+    public static final Field field$Material$itemType = ReflectionUtils.getDeclaredField(Material.class, "itemType");
+    public static final Field field$Material$blockType = ReflectionUtils.getDeclaredField(Material.class, "blockType");
+    public static final Field field$Material$BY_NAME = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "BY_NAME"));
+    public static final Field field$Material$VALUES = requireNonNull(ReflectionUtils.getDeclaredField(Material.class, "$VALUES"));
+    public static final Class<?> clazz$CraftMagicNumbers = requireNonNull(ReflectionUtils.getClazz(BukkitReflectionUtils.assembleCBClass("util.CraftMagicNumbers")));
+    public static final Field field$CraftMagicNumbers$BLOCK_MATERIAL = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "BLOCK_MATERIAL"));
+    public static final Field field$CraftMagicNumbers$MATERIAL_BLOCK = requireNonNull(ReflectionUtils.getDeclaredField(clazz$CraftMagicNumbers, "MATERIAL_BLOCK"));
 
     @SuppressWarnings({"unchecked", "deprecation", "all"})
     public static Material createBlockMaterial(Object block) {
@@ -72,15 +73,6 @@ public class MaterialHelper {
             if (field$Material$blockType != null) {
                 field$Material$blockType.set(enumInstance, Suppliers.memoize(() -> Registry.BLOCK.get(KeyUtils.toNamespacedKey(blockId))));
             }
-
-            // 添加到 Material 中
-            List<Material> materials = new ArrayList<>(Arrays.stream((Material[]) field$Material$VALUES.get(null)).toList());
-            materials.add(enumInstance);
-            ReflectionUtils.UNSAFE.putObjectVolatile(Material.class, ReflectionUtils.UNSAFE.staticFieldOffset(field$Material$VALUES), materials.toArray(new Material[0]));
-            field$Class$enumConstantDirectory.set(Material.class, null);
-            ((Map<String, Material>) field$Material$BY_NAME.get(null)).put(enumInstance.name(), enumInstance);
-            ((Map<Object, Material>) field$CraftMagicNumbers$BLOCK_MATERIAL.get(null)).put(block, enumInstance);
-            ((Map<Material, Object>) field$CraftMagicNumbers$MATERIAL_BLOCK.get(null)).put(enumInstance, block);
 
             return enumInstance;
         } catch (Throwable e) {
