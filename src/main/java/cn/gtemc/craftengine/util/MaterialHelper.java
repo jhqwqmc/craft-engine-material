@@ -1,6 +1,5 @@
 package cn.gtemc.craftengine.util;
 
-import cn.gtemc.craftengine.CustomMaterial;
 import com.google.common.base.Suppliers;
 import net.momirealms.craftengine.bukkit.nms.FastNMS;
 import net.momirealms.craftengine.bukkit.plugin.reflection.minecraft.MBuiltInRegistries;
@@ -17,7 +16,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
 
@@ -98,8 +96,7 @@ public class MaterialHelper {
 
             return existingMaterial;
         } catch (Throwable e) {
-            CustomMaterial.instance().getLogger().log(Level.WARNING, "Failed to create block material: " + block, e);
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }
