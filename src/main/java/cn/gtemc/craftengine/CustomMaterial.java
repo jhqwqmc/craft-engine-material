@@ -28,7 +28,6 @@ public final class CustomMaterial extends JavaPlugin {
             return;
         }
         getLogger().info("The dynamic addition of the Material enumeration is complete.");
-
     }
 
     public static CustomMaterial instance() {

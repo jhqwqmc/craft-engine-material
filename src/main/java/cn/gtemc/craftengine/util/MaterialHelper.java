@@ -47,43 +47,56 @@ public class MaterialHelper {
         try {
             Key blockId = KeyUtils.resourceLocationToKey(FastNMS.INSTANCE.method$Registry$getKey(MBuiltInRegistries.BLOCK, block));
             if (blockId.namespace().equals("minecraft")) return null;
-            Material enumInstance = (Material) ReflectionUtils.UNSAFE.allocateInstance(Material.class);
 
-            // 初始化 Enum 字段
-            field$Enum$name.set(enumInstance, blockId.asString().replace(":", "_").toUpperCase(Locale.ROOT));
-            field$Enum$ordinal.set(enumInstance, Material.values().length + 1);
+            String name = blockId.asString().replace(":", "_").toUpperCase(Locale.ROOT);
 
-            // 初始化 Material 字段
-            field$Material$id.setInt(enumInstance, ID.getAndIncrement());
-            field$Material$ctor.set(enumInstance, null);
-            field$Material$maxStack.setInt(enumInstance, 64);
-            if (field$Material$durability != null) {
-                field$Material$durability.setShort(enumInstance, (short) 0);
-            }
-            field$Material$data.set(enumInstance, BlockData.class);
-            field$Material$legacy.setBoolean(enumInstance, false);
-            field$Material$key.set(enumInstance, KeyUtils.toNamespacedKey(blockId));
-            if (field$Material$isBlock != null) {
-                field$Material$isBlock.setBoolean(enumInstance, true);
-            }
-            if (field$Material$itemType != null) {
-                field$Material$itemType.set(enumInstance, Suppliers.memoize(() -> null));
-            }
-            if (field$Material$blockType != null) {
-                field$Material$blockType.set(enumInstance, Suppliers.memoize(() -> Registry.BLOCK.get(KeyUtils.toNamespacedKey(blockId))));
+            Material existingMaterial = null;
+
+            try {
+                existingMaterial = Material.valueOf(name);
+            } catch (IllegalArgumentException e) {}
+
+            if (existingMaterial == null) {
+                Material enumInstance = (Material) ReflectionUtils.UNSAFE.allocateInstance(Material.class);
+
+                // 初始化 Enum 字段
+                field$Enum$name.set(enumInstance, name);
+                field$Enum$ordinal.set(enumInstance, Material.values().length + 1);
+
+                // 初始化 Material 字段
+                field$Material$id.setInt(enumInstance, ID.getAndIncrement());
+                field$Material$ctor.set(enumInstance, null);
+                field$Material$maxStack.setInt(enumInstance, 64);
+                if (field$Material$durability != null) {
+                    field$Material$durability.setShort(enumInstance, (short) 0);
+                }
+                field$Material$data.set(enumInstance, BlockData.class);
+                field$Material$legacy.setBoolean(enumInstance, false);
+                field$Material$key.set(enumInstance, KeyUtils.toNamespacedKey(blockId));
+                if (field$Material$isBlock != null) {
+                    field$Material$isBlock.setBoolean(enumInstance, true);
+                }
+                if (field$Material$itemType != null) {
+                    field$Material$itemType.set(enumInstance, Suppliers.memoize(() -> null));
+                }
+                if (field$Material$blockType != null) {
+                    field$Material$blockType.set(enumInstance, Suppliers.memoize(() -> Registry.BLOCK.get(KeyUtils.toNamespacedKey(blockId))));
+                }
+
+                // 添加到 Material 中
+                Material[] oldMaterials = (Material[]) field$Material$VALUES.get(null);
+                Material[] newMaterials = Arrays.copyOf(oldMaterials, oldMaterials.length + 1);
+                newMaterials[newMaterials.length - 1] = enumInstance;
+                ReflectionUtils.UNSAFE.putObjectVolatile(Material.class, ReflectionUtils.UNSAFE.staticFieldOffset(field$Material$VALUES), newMaterials);
+                existingMaterial = enumInstance;
             }
 
-            // 添加到 Material 中
-            Material[] oldMaterials = (Material[]) field$Material$VALUES.get(null);
-            Material[] newMaterials = Arrays.copyOf(oldMaterials, oldMaterials.length + 1);
-            newMaterials[newMaterials.length - 1] = enumInstance;
-            ReflectionUtils.UNSAFE.putObjectVolatile(Material.class, ReflectionUtils.UNSAFE.staticFieldOffset(field$Material$VALUES), newMaterials);
-            ((Map<String, Material>) field$Material$BY_NAME.get(null)).put(enumInstance.name(), enumInstance);
-            ((Map<Object, Material>) field$CraftMagicNumbers$BLOCK_MATERIAL.get(null)).put(block, enumInstance);
-            ((Map<Material, Object>) field$CraftMagicNumbers$MATERIAL_BLOCK.get(null)).put(enumInstance, block);
+            ((Map<String, Material>) field$Material$BY_NAME.get(null)).put(existingMaterial.name(), existingMaterial);
+            ((Map<Object, Material>) field$CraftMagicNumbers$BLOCK_MATERIAL.get(null)).put(block, existingMaterial);
+            ((Map<Material, Object>) field$CraftMagicNumbers$MATERIAL_BLOCK.get(null)).put(existingMaterial, block);
             field$Class$enumConstantDirectory.set(Material.class, null);
 
-            return enumInstance;
+            return existingMaterial;
         } catch (Throwable e) {
             CustomMaterial.instance().getLogger().log(Level.WARNING, "Failed to create block material: " + block, e);
             return null;
